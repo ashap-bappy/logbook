@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.github.com; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<title>The 1,000-Hour Year — Logbook</title>
+<meta name="description" content="A 52-week logbook for the 1,000-hour year: system design, AI engineering, DevOps, security.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__in">
+    <div class="brand">
+      <h1>Logbook</h1>
+      <p>The 1,000-hour year · AI-first ordering</p>
+    </div>
+
+    <div class="readout readout--total">
+      <span class="gauge">Total time</span>
+      <span class="readout__v num" id="roTotal">0.0<small>/936</small></span>
+    </div>
+    <div class="readout">
+      <span class="gauge">Plan week</span>
+      <span class="readout__v num" id="roPlan">01</span>
+    </div>
+    <div class="readout">
+      <span class="gauge">Calendar</span>
+      <span class="readout__v num" id="roCal">01</span>
+    </div>
+    <div class="readout" id="roSlackWrap">
+      <span class="gauge">Slack used</span>
+      <span class="readout__v num" id="roSlack">0<small>/4</small></span>
+    </div>
+    <div class="readout">
+      <span class="gauge">Streak</span>
+      <span class="readout__v num" id="roStreak">0<small>d</small></span>
+    </div>
+    <button class="readout linkish" id="roWriteups" type="button" title="View all write-ups">
+      <span class="gauge">Write-ups</span>
+      <span class="readout__v num" id="roWriteupsN">0</span>
+    </button>
+    <button class="syncbtn" id="syncBtn" type="button">
+      <span class="dot" id="syncDot" data-state="off"></span>
+      <span class="gauge" id="syncLabel">Local only</span>
+    </button>
+  </div>
+</header>
+
+<nav class="rail" aria-label="52 week rail">
+  <div class="rail__in" id="rail"></div>
+</nav>
+
+<main class="shell">
+
+  <!-- ============ WEEK ENTRY ============ -->
+  <section class="card" id="entry" data-q="1">
+    <div class="entry__top">
+      <span class="entry__no num" id="wkNo">01</span>
+      <div class="entry__ttl">
+        <h2 id="wkTitle">—</h2>
+        <div class="entry__meta" id="wkMeta"></div>
+      </div>
+      <div class="navbtns">
+        <button class="nav" id="prevWk" type="button" aria-label="Previous week">&larr;</button>
+        <button class="nav" id="nextWk" type="button" aria-label="Next week">&rarr;</button>
+      </div>
+    </div>
+
+    <ul class="items" id="wkItems"></ul>
+
+    <div class="strip">
+      <span class="gauge">The drip · 3 hrs this quarter</span>
+      <p id="wkDrip">—</p>
+    </div>
+
+    <div class="strip">
+      <span class="gauge">Write-up <span>(optional)</span></span>
+      <div class="field">
+        <input type="text" id="wuInput" placeholder="Link or a note on what you published">
+      </div>
+    </div>
+
+    <div class="actions" id="wkActions"></div>
+  </section>
+
+  <!-- ============ HOURS + LOG ============ -->
+  <aside class="side">
+
+    <section class="card">
+      <div class="card__hd"><span class="gauge">Hours · week <span id="hrsWk" class="num">01</span></span></div>
+      <div class="card__bd">
+        <div class="bars" id="bars"></div>
+        <div class="total">
+          <span class="gauge">Week total</span>
+          <span class="num" id="wkTotal">0.0 / 21</span>
+        </div>
+        <div id="tripwire"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__hd"><span class="gauge">Log an entry</span></div>
+      <div class="card__bd">
+        <form class="logform" id="logForm">
+          <div class="logform__row">
+            <input type="date" id="logDate" required aria-label="Date">
+            <div class="hours">
+              <button type="button" id="hMinus" aria-label="Less">&minus;</button>
+              <input type="number" id="logHours" value="1.5" min="0.25" max="16" step="0.25" aria-label="Hours">
+              <button type="button" id="hPlus" aria-label="More">+</button>
+            </div>
+          </div>
+          <div class="segs" id="segs"></div>
+          <input type="text" id="logNote" placeholder="One line — what you actually did" maxlength="120">
+          <button class="btn" type="submit">Log entry</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__hd"><span class="gauge">Recent entries</span></div>
+      <ul class="ledger" id="ledger"></ul>
+    </section>
+
+  </aside>
+</main>
+
+<footer class="foot">
+  <span class="hint" id="footHint"></span>
+  <label class="gauge" for="startDate" style="color:var(--dim)">Started</label>
+  <input type="date" id="startDate" aria-label="Start date">
+  <button class="btn btn--ghost" id="exportBtn" type="button">Export</button>
+  <button class="btn btn--ghost" id="importBtn" type="button">Import</button>
+  <input type="file" id="importFile" accept="application/json" hidden>
+</footer>
+
+<dialog id="wuDialog">
+  <div class="card__hd">
+    <span class="gauge">Write-ups logged</span>
+    <button class="btn btn--ghost" id="wuClose" type="button" style="margin-left:auto;padding:5px 12px">Close</button>
+  </div>
+  <ul class="wl" id="wuList"></ul>
+</dialog>
+
+<dialog id="syncDialog">
+  <div class="card__hd">
+    <span class="gauge">Sync — private GitHub repo</span>
+    <button class="btn btn--ghost" id="syncClose" type="button" style="margin-left:auto;padding:5px 12px">Close</button>
+  </div>
+  <div class="card__bd">
+    <p class="syncnote">Your logbook is stored as one JSON file in a repo you own. Every device that has the token sees the same data, and you get a full edit history for free.</p>
+    <ol class="steps">
+      <li>Create a <strong>private</strong> repo — <code>logbook-data</code> will do. Keep it separate from the repo hosting this page.</li>
+      <li>GitHub → Settings → Developer settings → Personal access tokens → <strong>Fine-grained tokens</strong> → Generate new token.</li>
+      <li>Repository access: <strong>Only select repositories</strong> → pick that one repo.</li>
+      <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong>. Nothing else.</li>
+      <li>Set an expiry you'll actually renew, generate, and paste it below.</li>
+    </ol>
+    <form class="syncform" id="syncForm">
+      <div class="syncform__row">
+        <label>Owner<input type="text" id="syOwner" placeholder="your-github-username" required></label>
+        <label>Repo<input type="text" id="syRepo" placeholder="logbook-data" required></label>
+      </div>
+      <div class="syncform__row">
+        <label>File path<input type="text" id="syPath" value="logbook.json"></label>
+        <label>Branch<input type="text" id="syBranch" value="main"></label>
+      </div>
+      <label>Token<input type="password" id="syToken" placeholder="github_pat_…" autocomplete="off" required></label>
+      <p class="syncwarn">This token can read and write that one repo, and it is kept in this browser. Revoke it on GitHub if you lose the device.</p>
+      <div class="syncform__act">
+        <button class="btn" type="submit">Connect</button>
+        <button class="btn btn--ghost" id="syncNow" type="button">Sync now</button>
+        <button class="btn btn--ghost" id="syncOff" type="button">Disconnect</button>
+      </div>
+      <p class="syncmsg" id="syncMsg"></p>
+    </form>
+  </div>
+</dialog>
+
+<script src="sync.js"></script>
+<script src="roadmap.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

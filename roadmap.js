@@ -1,0 +1,1413 @@
+const ROADMAP = {
+ "meta": {
+  "title": "The 1,000-Hour Year",
+  "subtitle": "AI-first ordering",
+  "totalHours": 936,
+  "slackBudget": 4,
+  "restDays": 1,
+  "targets": {
+   "study": 6,
+   "build": 10,
+   "drip": 3,
+   "consolidate": 2
+  },
+  "buckets": [
+   {
+    "key": "study",
+    "label": "Study",
+    "desc": "Book, course, docs — the current track"
+   },
+   {
+    "key": "build",
+    "label": "Build",
+    "desc": "Hands-on, on the spine project"
+   },
+   {
+    "key": "drip",
+    "label": "Drip",
+    "desc": "Keeping the other three tracks warm"
+   },
+   {
+    "key": "consolidate",
+    "label": "Consol.",
+    "desc": "Write-up, review, spaced repetition"
+   }
+  ]
+ },
+ "quarters": [
+  {
+   "n": 1,
+   "name": "Foundations",
+   "sub": "System design & the substrate",
+   "from": 1,
+   "to": 13,
+   "drip": "1 hr Python katas — arrive warm for week 14 · 1 hr Docker/Linux exercise · 1 hr reading one OWASP Top 10 category plus its cheat sheet. Weeks 10–12: swap the web OWASP reading for the LLM Top 10 and Agentic Top 10, read as a threat catalogue only."
+  },
+  {
+   "n": 2,
+   "name": "AI Engineering",
+   "sub": "RAG, agents, evaluation",
+   "from": 14,
+   "to": 26,
+   "drip": "1 system design problem per week, written and timed · 1 hr Docker/Linux · 2 PortSwigger Web Security Academy labs."
+  },
+  {
+   "n": 3,
+   "name": "DevOps & Platform",
+   "sub": "Kubernetes, IaC, GitOps, observability",
+   "from": 27,
+   "to": 39,
+   "drip": "1 design problem per week · 2 PortSwigger labs · add one case to your AI eval set weekly so the harness does not rot."
+  },
+  {
+   "n": 4,
+   "name": "Security",
+   "sub": "Attack it, then harden it",
+   "from": 40,
+   "to": 52,
+   "drip": "1 design problem per week · 1 K8s troubleshooting scenario · keep the AI evals green · interview-shaped practice."
+  }
+ ],
+ "weeks": [
+  {
+   "n": 1,
+   "q": 1,
+   "title": "Lab setup and honest baseline",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "WSL2 + Ubuntu set up properly, dotfiles, tmux, modern shell tooling (`fzf`, `rg`, `bat`, `jq`). Note system (Obsidian or markdown in git) and Anki."
+    },
+    {
+     "label": "Build",
+     "text": "Bootstrap FilingHub — ASP.NET Core minimal API + MongoDB via `docker-compose`. One endpoint that accepts an upload and stores it."
+    },
+    {
+     "label": "Also",
+     "text": "Write, from memory and without looking, the architecture of the largest system you work on today. Save it. You'll redo this in week 52."
+    },
+    {
+     "label": "Done when",
+     "text": "`docker compose up` gives a working API + DB, and the README has a C4 Context diagram."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    3
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 2,
+   "q": 1,
+   "title": "Linux fundamentals",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Processes, fork/exec, file descriptors, permissions & setuid, signals, systemd units, `/proc`, package management. Tools: `ps`, `lsof`, `strace`, `journalctl`, `htop`."
+    },
+    {
+     "label": "Build",
+     "text": "Run FilingHub as a systemd service in a plain VM (no Docker). Bash healthcheck + log rotation."
+    },
+    {
+     "label": "Done when",
+     "text": "You can narrate exactly what happens between typing `./app` and the process becoming PID 1's child."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 3,
+   "q": 1,
+   "title": "Networking I: the packet's journey",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "IP, CIDR & subnetting, ARP, DNS resolution path (recursive/authoritative, TTL, record types), TCP handshake and teardown, TCP states, ports, NAT. Tools: `dig`, `ss`, `tcpdump`, Wireshark, `curl -v`, `mtr`."
+    },
+    {
+     "label": "Build",
+     "text": "Capture a full request to your API in Wireshark and annotate every packet. Then break DNS deliberately and diagnose it from first principles."
+    },
+    {
+     "label": "Done when",
+     "text": "You can hand-draw the path from browser to container, naming every hop and translation."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 4,
+   "q": 1,
+   "title": "Networking II: TLS, HTTP, proxies",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "TLS 1.3 handshake, certificate chains, PKI, SNI, mTLS concepts. HTTP/1.1 vs 2 vs 3, head-of-line blocking, keep-alive, connection pooling. Forward vs reverse proxies, L4 vs L7 load balancing, LB algorithms."
+    },
+    {
+     "label": "Build",
+     "text": "Put YARP or nginx in front of FilingHub. Create your own CA, issue a cert, terminate TLS, enable HTTP/2. Then deliberately misconfigure the chain and read the error properly."
+    },
+    {
+     "label": "Done when",
+     "text": "You can explain chain validation and why a self-signed cert fails, without hand-waving."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 5,
+   "q": 1,
+   "title": "Thinking in numbers",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Latency numbers every engineer should know. Back-of-the-envelope estimation. Availability math (nines, serial vs parallel dependencies). Percentiles and why averages lie. Little's Law. SLI/SLO/error budgets (SRE Book ch. 3–4). DDIA 2e ch. 1."
+    },
+    {
+     "label": "Build",
+     "text": "A capacity model for FilingHub in a spreadsheet: tenants, filings/day, peak RPS, payload sizes, 3-year storage growth, p99 target, cost estimate."
+    },
+    {
+     "label": "Done when",
+     "text": "You can estimate \"how many servers?\" for a novel problem in 10 minutes on paper."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 6,
+   "q": 1,
+   "title": "Storage engines and indexes",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "DDIA 2e ch. 3–4. B-trees vs LSM-trees, write/read amplification, compaction, page cache, column-oriented storage, secondary and compound indexes, covering indexes, **vector indexes for semantic search** (you'll use these in week 19)."
+    },
+    {
+     "label": "Build",
+     "text": "Index tuning lab in MongoDB. Load 5M documents, run realistic queries, read `explain()` output, add a compound index, measure. Then find a query where the index makes it *worse* and explain why."
+    },
+    {
+     "label": "Done when",
+     "text": "You have a latency chart and can predict which of two indexes wins before testing."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 7,
+   "q": 1,
+   "title": "Replication and consistency",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "DDIA 2e on replication and consistency/consensus. Leader-follower, sync vs async, replication lag, read-your-writes / monotonic reads, quorums, linearizability vs eventual consistency, CAP and why PACELC is the more useful framing, Raft (read figure 2 of the paper until it's boring)."
+    },
+    {
+     "label": "Build",
+     "text": "3-node MongoDB replica set. Write continuously, `kill -9` the primary, measure election time, observe stale reads from secondaries. Try each read/write concern."
+    },
+    {
+     "label": "Done when",
+     "text": "You've written an incident-style report of what your app experienced during failover."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 8,
+   "q": 1,
+   "title": "Partitioning and transactions",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "DDIA 2e on sharding and transactions. Range vs hash partitioning, hotspots and skew, rebalancing, request routing, local vs global secondary indexes. Isolation levels, write skew, phantoms, 2PC and why it hurts, MongoDB multi-document transactions."
+    },
+    {
+     "label": "Build",
+     "text": "Shard a FilingHub collection by tenant. Deliberately create a hot tenant (80% of traffic), observe the skew, fix it with a composite shard key."
+    },
+    {
+     "label": "Done when",
+     "text": "You have a written shard-key rationale doc listing the options you rejected."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 9,
+   "q": 1,
+   "title": "Asynchronous systems",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Queues vs logs, RabbitMQ vs Kafka semantics, at-most/at-least/effectively-once, consumer groups, ordering guarantees, dead-letter queues, poison messages, backpressure. Patterns: transactional outbox, idempotent consumer, saga, choreography vs orchestration."
+    },
+    {
+     "label": "Build",
+     "text": "Move filing computation to a background worker over RabbitMQ or Kafka. Implement the transactional outbox and an idempotent consumer. Prove it: replay the same message 100 times, assert one result."
+    },
+    {
+     "label": "Done when",
+     "text": "Duplicate delivery is a non-event, and you can prove it with a test."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 10,
+   "q": 1,
+   "title": "Caching",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Cache-aside vs read-through vs write-through vs write-behind. Invalidation strategies, TTL vs event-driven. Cache stampede and mitigations. Redis data structures beyond GET/SET. Distributed locks and why Redlock is contested. CDN and HTTP caching semantics (ETag, Cache-Control)."
+    },
+    {
+     "label": "Build",
+     "text": "Add Redis to FilingHub with stampede protection. Measure hit ratio and p99 improvement. Then engineer a stale-read bug on purpose and fix it properly."
+    },
+    {
+     "label": "Done when",
+     "text": "You can state your cache's consistency guarantee in one sentence."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 11,
+   "q": 1,
+   "title": "API design and resilience",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "REST maturity, resource modelling, pagination (offset vs cursor), versioning, idempotency keys, ETags/optimistic concurrency, gRPC vs REST vs GraphQL trade-offs, error contracts (RFC 9457). Resilience: timeouts, retries with jitter, circuit breakers, bulkheads, rate limiting algorithms (token bucket, sliding window)."
+    },
+    {
+     "label": "Build",
+     "text": "Harden the API: Polly policies with sensible timeouts and jittered retries, a circuit breaker on the mock authority endpoint, ASP.NET rate limiting, idempotency keys on POST."
+    },
+    {
+     "label": "Done when",
+     "text": "Chaos-test it — 50% downstream failure rate and 5s latency; your system degrades, not collapses."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 12,
+   "q": 1,
+   "title": "Architecture styles and writing it down",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Modular monolith vs microservices (and the honest cost of the latter), DDD bounded contexts, event-driven architecture, CQRS and event sourcing (and when not to), strangler fig. Documentation: C4 model, ADRs (Nygard format), design docs."
+    },
+    {
+     "label": "Build",
+     "text": "Three real ADRs for FilingHub (shard key, sync vs async computation, monolith vs services). C4 levels 1–3. A proper 4-page design doc for a feature you'd actually add."
+    },
+    {
+     "label": "Done when",
+     "text": "A colleague can read the design doc and correctly critique it."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 13,
+   "q": 1,
+   "title": "Q1 consolidation + mock interviews",
+   "items": [
+    {
+     "label": "Do",
+     "text": "Five full design exercises, 45 min each, written: (1) URL shortener at 10k RPS, (2) distributed rate limiter, (3) file storage with dedupe and resumable upload, (4) multi-tenant reporting platform, (5) a redesign of a system you actually work on."
+    },
+    {
+     "label": "Then",
+     "text": "Two verbal mocks — with a colleague, narrated and recorded, or against an LLM instructed to be an adversarial staff-level interviewer."
+    },
+    {
+     "label": "Publish",
+     "text": "\"What I learned making my own database fail over.\""
+    },
+    {
+     "label": "Checkpoint",
+     "text": "Can you drive a 45-min design discussion, unprompted, with numbers? If not, take a slack week here before Q2."
+    }
+   ],
+   "gates": [
+    0,
+    2,
+    3
+   ],
+   "checkpoint": true
+  },
+  {
+   "n": 14,
+   "q": 2,
+   "title": "Python for someone who already programs",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Skip the beginner material entirely. Go straight to: `uv` for environments and packaging, type hints and `mypy`, Pydantic v2 for validation, FastAPI, `pytest` and fixtures, async/await, and enough pandas/numpy to read other people's code."
+    },
+    {
+     "label": "Build",
+     "text": "A FastAPI sidecar service for FilingHub — fully typed, Pydantic models, tests, Dockerfile, running in your Compose stack alongside the .NET API."
+    },
+    {
+     "label": "Done when",
+     "text": "You'd be comfortable in a Python code review, and your service talks to the .NET one."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 15,
+   "q": 2,
+   "title": "How LLMs actually behave",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Tokenisation (and why it explains half of model weirdness), embeddings, attention intuition, context windows, each sampling parameter and what it does, why models hallucinate, cost and latency structure (input vs output tokens, prompt caching), model selection. Structured output: JSON schema mode, constrained decoding, tool/function calling."
+    },
+    {
+     "label": "Build",
+     "text": "Structured extraction from real filing documents into a strongly-typed C# record using `Microsoft.Extensions.AI` with JSON schema output. Then the same thing in Python with Pydantic. Measure accuracy on 30 hand-labelled documents."
+    },
+    {
+     "label": "Done when",
+     "text": "You have an accuracy number, not a vibe — and you've felt the difference between the two SDKs."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 16,
+   "q": 2,
+   "title": "Context engineering",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Prompt engineering has been absorbed into the broader discipline of **context engineering** — designing everything inside the window: system prompt, retrieved documents, tool results, memory, examples, reasoning budget. Few-shot example selection, task decomposition, chain-of-thought and its limits, prompt caching economics, building a failure taxonomy for your own task."
+    },
+    {
+     "label": "Build",
+     "text": "A versioned prompt library — prompts in git with a template system, not string literals in code. A/B two designs on your labelled set from week 15."
+    },
+    {
+     "label": "Done when",
+     "text": "Changing a prompt is a reviewed, tested, versioned change."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 17,
+   "q": 2,
+   "title": "Evaluation (the keystone week — do not skip)",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "This is what separates AI engineers from people who've called an API. Golden datasets and how to build one cheaply. Deterministic assertions vs LLM-as-judge. Rubric design, judge calibration and judge bias. Pairwise comparison. Regression testing. Offline vs online eval, A/B testing in production, human review loops."
+    },
+    {
+     "label": "Build",
+     "text": "An eval harness with a 50–100 case golden set, using promptfoo or hand-rolled. Wire it into a **minimal GitHub Actions workflow** that fails the build when quality drops. (This CI is deliberately crude — week 34 rebuilds it with OIDC, caching, scanning and SBOM.)"
+    },
+    {
+     "label": "Done when",
+     "text": "You cannot merge a prompt change that degrades quality. This single artefact will be the most impressive thing in your portfolio for the next two years."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 18,
+   "q": 2,
+   "title": "Document ingestion: the unglamorous 80%",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "RAG quality is decided at ingestion, not retrieval. PDF text extraction and its failure modes, OCR when you must, table extraction, layout-aware parsing, XML and spreadsheet ingestion (your home turf), document hierarchy preservation, normalisation and deduplication, incremental re-indexing, handling documents that change."
+    },
+    {
+     "label": "Build",
+     "text": "An ingestion pipeline for your regulatory corpus — PDFs, XML schemas, and spreadsheets in, clean structure-preserving chunks with rich metadata out. Handle a document revision without reindexing everything."
+    },
+    {
+     "label": "Done when",
+     "text": "You can point at a chunk and trace it back to a page, section and heading in the source."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 19,
+   "q": 2,
+   "title": "RAG I: retrieval that works",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Chunking strategies (fixed, recursive, semantic, structure-aware) and why chunking is where most RAG dies. Embedding model selection, dimensionality, vector index types (HNSW, IVF), similarity metrics. Vector store options — **MongoDB Atlas Vector Search** lets you keep a single datastore, which matters. Hybrid search (BM25 + dense) and why pure vector search underperforms on jargon-heavy corpora like tax guidance."
+    },
+    {
+     "label": "Build",
+     "text": "RAG over your ingested corpus (OECD Pillar Two guidance, GIR schema documentation — content whose answers you can actually judge). Hybrid retrieval, structure-aware chunking."
+    },
+    {
+     "label": "Done when",
+     "text": "You've measured recall@k and improved it by changing chunking alone."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 20,
+   "q": 2,
+   "title": "RAG II: making it trustworthy",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Query rewriting and expansion, HyDE, reranking with cross-encoders, metadata filtering, **per-tenant document permissions enforced at the vector store** (a hard, underrated problem you will hit at work), citation and grounding, refusing when context is insufficient. Retrieval metrics: recall@k, MRR, NDCG. Generation metrics: faithfulness, answer relevance, context precision."
+    },
+    {
+     "label": "Build",
+     "text": "Add a reranker, mandatory inline citations, and per-tenant filtering. Extend the week-17 harness with faithfulness scoring."
+    },
+    {
+     "label": "Done when",
+     "text": "Every answer cites its source, and cross-tenant retrieval leakage is impossible and tested."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 21,
+   "q": 2,
+   "title": "Agents I: tools and control",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "What makes something an agent rather than a pipeline. Tool/function calling, the ReAct loop, planning vs reactive, state and memory, error recovery, loop and cost budgets, termination conditions, human-in-the-loop gates for consequential actions. Framework landscape: Microsoft Agent Framework 1.0 (.NET and Python), LangGraph, or none at all — a plain loop is often the correct answer."
+    },
+    {
+     "label": "Security",
+     "text": "(you read the threat catalogue in the weeks 10–12 drip; full treatment week 46) design tools with **least privilege from the start** — an agent that only needs to read filings gets a read-only credential, not the app's connection string. Require human approval for anything that writes or submits. Assume every document your agent reads is hostile. If you skipped the Q1 reading, go back and do it before writing a single tool schema; retrofitting permissions onto an agent is far more painful than scoping them on day one."
+    },
+    {
+     "label": "Build",
+     "text": "A validation agent: given a rejected filing, it calls your API tools to investigate, identifies the failing rule, and explains the fix in plain language. Hard cost and iteration caps. Read-only tools except one write, which is gated on approval."
+    },
+    {
+     "label": "Done when",
+     "text": "It handles a tool failure gracefully instead of looping forever, and it cannot submit anything without you."
+    }
+   ],
+   "gates": [
+    0,
+    2,
+    3
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 22,
+   "q": 2,
+   "title": "Agents II: MCP and multi-agent",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "The Model Context Protocol — servers, clients, tools, resources, prompts, transports. Why it matters: it's becoming the interoperability standard, and engineers who can *build* MCP servers are still a small minority of the workforce. Tool schema design, permission scoping, multi-agent patterns (handoff, supervisor, parallel) and when a single agent is better. Durability, checkpointing and resumability for long-running tasks."
+    },
+    {
+     "label": "Security",
+     "text": "tool poisoning and the confused deputy problem. Your MCP server is an API that a non-deterministic client drives — scope every tool, validate every argument, log every call."
+    },
+    {
+     "label": "Build",
+     "text": "An MCP server exposing FilingHub operations as scoped tools with proper schemas. Drive it from Claude Code and from your own agent."
+    },
+    {
+     "label": "Done when",
+     "text": "Someone else's agent can operate your system, and can't exceed the permissions you granted it."
+    }
+   ],
+   "gates": [
+    0,
+    2,
+    3
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 23,
+   "q": 2,
+   "title": "LLMOps in the small",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Tracing with OpenTelemetry GenAI semantic conventions — this is just observability applied to non-determinism, and you'll generalise it in week 36. Langfuse for LLM-specific tracing; the Aspire dashboard now surfaces model interaction traces natively. Token and cost accounting, semantic caching, model routing and fallback, rate limit handling, PII redaction before egress, input and output guardrails, prompt canaries and rollback, drift detection."
+    },
+    {
+     "label": "Build",
+     "text": "Every LLM call traced with tokens, latency, cost and eval score. A cost dashboard with per-tenant attribution and budget alerts. Canary a prompt change behind a feature flag with automatic rollback. (Week 35 upgrades this to a real GitOps canary.)"
+    },
+    {
+     "label": "Done when",
+     "text": "You can answer \"which tenant spent $400 on inference yesterday and why\" in 30 seconds."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 24,
+   "q": 2,
+   "title": "Fine-tuning and the cheaper alternatives",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "When fine-tuning is genuinely the answer (format, style, latency, cost — rarely knowledge) and when it isn't. LoRA/QLoRA, dataset construction and why quality beats quantity, distillation to smaller models, self-hosting with vLLM or Ollama, quantisation, the latency/cost/quality frontier. Open-weight vs frontier model economics."
+    },
+    {
+     "label": "Build",
+     "text": "Fine-tune a small open model on one narrow, high-volume task from FilingHub. Compare against prompting a frontier model on your week-17 eval set: quality, latency, cost per 1k calls."
+    },
+    {
+     "label": "Done when",
+     "text": "You can state with numbers whether fine-tuning was worth it. \"No\" is an excellent answer."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 25,
+   "q": 2,
+   "title": "Classical ML literacy",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Enough to stop reaching for an LLM reflexively. Supervised learning, feature engineering, train/validation/test discipline, data leakage, precision/recall/F1/AUC and choosing the right metric, class imbalance, overfitting, cross-validation, model drift and monitoring. Gradient boosting (XGBoost/LightGBM) — still the right answer for most tabular problems."
+    },
+    {
+     "label": "Build",
+     "text": "Find a FilingHub task where a classifier beats an LLM — anomaly flagging on numeric filing data, say. Build it, measure it, show it's a thousand times cheaper and faster."
+    },
+    {
+     "label": "Done when",
+     "text": "You've demonstrated a case where the boring model wins, with numbers."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 26,
+   "q": 2,
+   "title": "Q2 consolidation",
+   "items": [
+    {
+     "label": "Do",
+     "text": "End-to-end demo of the AI system — ingestion → retrieval → agent → citation → cost report. Run the full eval suite. Load-test it and find where latency falls apart. Write the architecture doc."
+    },
+    {
+     "label": "Also",
+     "text": "Spend a few hours deliberately improving your **AI-assisted engineering** workflow — you already use Claude Code and Codex; now that you understand context engineering, agents and evals from the inside, revisit how you drive them. This compounds into every remaining week of the year."
+    },
+    {
+     "label": "Publish",
+     "text": "\"Building RAG over regulatory guidance: what actually moved the numbers.\" This is the post that gets you noticed."
+    },
+    {
+     "label": "Checkpoint",
+     "text": "Is there an eval gate blocking merges? Can you explain, from your own measurements, when RAG beats fine-tuning beats prompting beats a gradient-boosted tree?"
+    }
+   ],
+   "gates": [
+    0,
+    2,
+    3
+   ],
+   "checkpoint": true
+  },
+  {
+   "n": 27,
+   "q": 3,
+   "title": "Containers, properly",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "What a container actually is — namespaces, cgroups, union filesystems, the OCI spec. Image layers and cache invalidation. Multi-stage builds. Chiselled/distroless .NET base images. Non-root users. Init and signal handling (the PID 1 problem)."
+    },
+    {
+     "label": "Build",
+     "text": "Rebuild every FilingHub image — .NET API, Python AI service, worker: multi-stage, non-root, minimal base, proper `.dockerignore`, HEALTHCHECK. Get the .NET image under 120 MB and measure cold start. Python images with `uv` and a slim runtime layer."
+    },
+    {
+     "label": "Done when",
+     "text": "You can explain why `apt-get update` on its own layer is a bug, and your images are half the size they were."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 28,
+   "q": 3,
+   "title": "12-factor and local orchestration",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "12-factor (still the right baseline), config vs code, secrets handling, graceful shutdown, health vs readiness semantics, service discovery. .NET Aspire as the full local orchestration story beyond the AI dashboard you used in week 23."
+    },
+    {
+     "label": "Build",
+     "text": "One Aspire AppHost running the whole system — API, worker, Python AI service, Mongo, Redis, broker, vector store — with unified telemetry. Verify graceful shutdown drains in-flight filings and in-flight LLM calls."
+    },
+    {
+     "label": "Done when",
+     "text": "A new developer clones the repo and runs the entire system, AI included, with one command."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 29,
+   "q": 3,
+   "title": "Kubernetes I: the model",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Control plane anatomy (apiserver, etcd, scheduler, controller-manager, kubelet, kube-proxy), the reconciliation loop, Pods, ReplicaSets, Deployments, Services, labels and selectors. Live in `kubectl`: get/describe/logs/exec/port-forward."
+    },
+    {
+     "label": "Build",
+     "text": "Local cluster with kind or k3d. Deploy the .NET API by hand-written YAML. No Helm yet — feel the pain first."
+    },
+    {
+     "label": "Done when",
+     "text": "You can explain, component by component, what happens between `kubectl apply` and a running container."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 30,
+   "q": 3,
+   "title": "Kubernetes II: running it well",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "ConfigMaps and Secrets, liveness/readiness/startup probes, resource requests and limits, QoS classes, OOMKills, HPA, rolling update strategy, PodDisruptionBudgets, Ingress."
+    },
+    {
+     "label": "Build",
+     "text": "Full manifests with correct probes and limits. Perform a rolling deploy under continuous load and prove zero dropped requests. Then break it deliberately with a bad readiness probe and watch what happens."
+    },
+    {
+     "label": "Done when",
+     "text": "You've diagnosed both a CrashLoopBackOff and an OOMKill from first principles."
+    },
+    {
+     "label": "AI thread",
+     "text": "the AI service has different scaling characteristics — long request durations, external API rate limits, high memory for embeddings. Set its probes and HPA metrics accordingly; request-count autoscaling will mislead you here."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 31,
+   "q": 3,
+   "title": "Kubernetes III: state, jobs, isolation",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "PersistentVolumes and Claims, StorageClasses, StatefulSets and ordering guarantees, Jobs and CronJobs, namespaces, ServiceAccounts and RBAC, NetworkPolicies, CRDs and the operator pattern."
+    },
+    {
+     "label": "Build",
+     "text": "Mongo as a StatefulSet with a real PVC. Default-deny NetworkPolicies, opening only what's needed. A CronJob for nightly report generation and for incremental corpus re-indexing."
+    },
+    {
+     "label": "Done when",
+     "text": "Your namespace denies all traffic by default and everything still works."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 32,
+   "q": 3,
+   "title": "Packaging and environments",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Helm (templates, values, releases, hooks) vs Kustomize (overlays, patches), when each wins, chart testing, environment promotion strategies."
+    },
+    {
+     "label": "Build",
+     "text": "A Helm chart covering the whole system with dev/staging/prod values. Push it to an OCI registry."
+    },
+    {
+     "label": "Done when",
+     "text": "One chart, three environments, zero copy-pasted YAML."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 33,
+   "q": 3,
+   "title": "Infrastructure as Code",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Terraform/OpenTofu core: providers, resources, state (state is the whole game), remote backends with locking, modules, variables and outputs, `plan` vs `apply`, drift, `import`, workspaces vs directories."
+    },
+    {
+     "label": "Build",
+     "text": "Provision the real cloud footprint as reusable modules — resource group, AKS, managed Mongo/Cosmos with vector search, Key Vault, networking, the model endpoint. Destroy and recreate it twice."
+    },
+    {
+     "label": "Done when",
+     "text": "Your entire cloud footprint exists only as code, and `terraform plan` on a clean checkout shows no changes."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 34,
+   "q": 3,
+   "title": "Continuous Integration (properly, this time)",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Pipeline design: build/test/scan/package, caching, matrix builds, artefacts, reusable workflows, ephemeral runners. **OIDC federation to the cloud instead of long-lived secrets** — the single biggest CI security upgrade most teams haven't made. Trunk-based development and why long-lived branches are a delivery tax."
+    },
+    {
+     "label": "Build",
+     "text": "Rebuild the crude week-17 pipeline into a real one, in GitHub Actions *and* Azure DevOps (learn both; your employer likely uses ADO). Unit and integration tests with Testcontainers, coverage gate, **the AI eval suite as a required check**, SBOM generation, OIDC-authenticated registry push."
+    },
+    {
+     "label": "Done when",
+     "text": "No static cloud credential exists anywhere, and a quality regression in the LLM output fails the build alongside a failing unit test."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 35,
+   "q": 3,
+   "title": "Continuous Delivery and GitOps",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Push vs pull deployment, GitOps principles, Argo CD and Flux, app-of-apps, sync waves, drift correction. Progressive delivery: blue-green, canary, feature flags. Database migrations under zero downtime (expand/contract)."
+    },
+    {
+     "label": "Build",
+     "text": "Argo CD reconciling everything from a config repo. A canary release with automatic rollback on error-rate breach. Replace the week-23 feature-flag prompt canary with a real GitOps canary gated on live eval scores."
+    },
+    {
+     "label": "Done when",
+     "text": "Deployment is a merged PR, and you've rolled back automatically at least once."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 36,
+   "q": 3,
+   "title": "Observability I: instrumentation, generalised",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Metrics vs logs vs traces — and why \"three pillars\" is the wrong mental model; it's one model of your system viewed three ways. OpenTelemetry (SDK, collector, semantic conventions), the Prometheus data model and PromQL, Grafana, cardinality explosions, structured logging, correlation IDs. RED and USE methods."
+    },
+    {
+     "label": "Build",
+     "text": "Take the LLM-specific tracing from week 23 and generalise it: OTel across every service, traces spanning API → queue → worker → AI service → vector store → DB. Prometheus + Grafana. This completes the re-platforming — the AI service is now a first-class citizen of the platform, not a special case."
+    },
+    {
+     "label": "Done when",
+     "text": "You can follow a single filing's trace across every service, including the LLM calls, and see where the 400ms went."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 37,
+   "q": 3,
+   "title": "Observability II: SRE practice",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "SLIs/SLOs/error budgets in practice, alerting on symptoms not causes, alert fatigue, runbooks, on-call rotations, blameless postmortems, incident command. Chaos engineering basics. DORA metrics."
+    },
+    {
+     "label": "Build",
+     "text": "Three SLOs with burn-rate alerts — including one on AI answer quality, not just availability. Then inject a real failure (kill the broker, throttle the DB, exhaust the model rate limit, fill a disk) via a script scheduled to run at a time you don't know. Diagnose it live and write a blameless postmortem."
+    },
+    {
+     "label": "Done when",
+     "text": "Your alerts fire on user-visible symptoms, and every one has a written runbook."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 38,
+   "q": 3,
+   "title": "Automation and the golden path",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Bash beyond the basics (`set -euo pipefail`, traps, arrays), PowerShell for the Windows/Azure side. Internal developer platform thinking: golden paths, self-service, paved roads. Backstage concepts."
+    },
+    {
+     "label": "Build",
+     "text": "A CLI that scaffolds a new service — repo, Dockerfile, Helm chart, CI pipeline, dashboards, all pre-wired. Write it in Python; week 14 pays for itself here. Add a second template: \"new AI service\" with tracing, eval harness and cost budget included by default."
+    },
+    {
+     "label": "Done when",
+     "text": "A new service goes from nothing to deployed-with-monitoring in under 10 minutes."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 39,
+   "q": 3,
+   "title": "Q3 consolidation: prove it end to end",
+   "items": [
+    {
+     "label": "Do",
+     "text": "Destroy every environment. Rebuild the entire platform from an empty cloud subscription with only `terraform apply` and a pipeline run. Time it."
+    },
+    {
+     "label": "Also",
+     "text": "Load-test with k6 to the actual breaking point. Backup/restore drill with measured RTO/RPO. Three timed CKA-style troubleshooting labs on killer.sh."
+    },
+    {
+     "label": "Publish",
+     "text": "\"Rebuilding my entire platform, AI service included, from zero in 27 minutes\" — with the numbers."
+    },
+    {
+     "label": "Checkpoint",
+     "text": "Full unattended rebuild under 30 minutes with monitoring live at the end. **Cert window: CKA, and Terraform Associate or AZ-400 if useful.**"
+    }
+   ],
+   "gates": [
+    0,
+    2,
+    3
+   ],
+   "checkpoint": true
+  },
+  {
+   "n": 40,
+   "q": 4,
+   "title": "Security fundamentals and the mental model",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "CIA triad, threat actors and motivations, attack surface, trust boundaries, defence in depth, least privilege, fail-secure. Crypto primitives you must not confuse: hashing vs HMAC vs symmetric vs asymmetric vs KDF. Password storage (Argon2id, bcrypt) and why you never invent your own."
+    },
+    {
+     "label": "Build",
+     "text": "Audit every cryptographic and randomness call across all three services. Find the `Random` that should be `RandomNumberGenerator`. Fix it."
+    },
+    {
+     "label": "Done when",
+     "text": "You can classify any primitive by the property it actually provides."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 41,
+   "q": 4,
+   "title": "Authentication, authorisation, and tenant isolation",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "OAuth 2.1 flows (authorization code + PKCE, client credentials — and why implicit and ROPC are dead), OIDC vs OAuth, JWT structure and validation pitfalls (alg confusion, missing aud/iss checks, clock skew), sessions vs tokens, refresh token rotation, MFA, RBAC vs ABAC vs ReBAC, **multi-tenant isolation patterns**."
+    },
+    {
+     "label": "Build",
+     "text": "Real OIDC (Entra ID or Keycloak) across the platform, including the MCP server and the Python service. Then a test suite that attempts cross-tenant access on every endpoint — and every retrieval query — and asserts denial."
+    },
+    {
+     "label": "Done when",
+     "text": "Tenant isolation is enforced at the data layer, not the controller, and tested. Including in the vector store."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 42,
+   "q": 4,
+   "title": "Web attacks I: injection and the classics",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "OWASP Top 10 properly, then PortSwigger labs: SQL injection (including blind and time-based), **NoSQL injection** (directly relevant to your Mongo work), command injection, XSS (reflected, stored, DOM), CSRF, SSRF."
+    },
+    {
+     "label": "Build",
+     "text": "A `vulnerable` branch where you deliberately introduce three of these. Exploit each with Burp. Fix them and write the regression test."
+    },
+    {
+     "label": "Done when",
+     "text": "You've exfiltrated data from your own app using a NoSQL injection you wrote."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 43,
+   "q": 4,
+   "title": "Web attacks II: logic, parsing, and files",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Broken access control and IDOR (the number one real-world finding), business logic flaws, insecure deserialization, file upload attacks, path traversal, **XXE and XML bombs** — critical for you, since regulatory XML parsing is your day job. Race conditions."
+    },
+    {
+     "label": "Build",
+     "text": "Attack your own XML filing parser: XXE for local file read, billion-laughs for DoS, external entity SSRF. Then harden `XmlReaderSettings` (`DtdProcessing.Prohibit`, null resolver, size limits) and prove the attacks fail. Then attack the **document ingestion pipeline** from week 18 — malicious PDFs, zip bombs, oversized uploads."
+    },
+    {
+     "label": "Done when",
+     "text": "You've found a real XXE-class issue in code you or your team wrote."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 44,
+   "q": 4,
+   "title": "API security",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "OWASP API Security Top 10 — BOLA/BFLA, mass assignment, excessive data exposure, unrestricted resource consumption, improper inventory management. GraphQL-specific abuse. Shadow and zombie APIs."
+    },
+    {
+     "label": "Build",
+     "text": "A structured API pentest of the whole platform, including the MCP server's tool endpoints. Write it up as a real findings report: title, CVSS severity, reproduction steps, impact, remediation."
+    },
+    {
+     "label": "Done when",
+     "text": "You have a professional-quality pentest report you'd hand a client."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 45,
+   "q": 4,
+   "title": "Threat modelling",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "STRIDE, data flow diagrams, trust boundaries, attack trees, abuse cases, risk ranking (DREAD's weaknesses and better alternatives), when to threat-model (design time, not after)."
+    },
+    {
+     "label": "Build",
+     "text": "A complete threat model of the platform with a DFD, STRIDE-per-element analysis, and a prioritised remediation backlog. The AI components create trust boundaries most models miss — tenant documents entering the context window, tool calls crossing privilege levels. Then do a lightweight one for a real feature at work and share it."
+    },
+    {
+     "label": "Done when",
+     "text": "Your model found at least two issues you hadn't thought of while building."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 46,
+   "q": 4,
+   "title": "AI and LLM security (the payoff week)",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "OWASP Top 10 for LLM Applications, and the separate **OWASP Top 10 for Agentic Applications** — these are distinct lists because an agent that *acts* carries categorically greater risk than a model that merely generates. Direct vs indirect prompt injection, RAG and retrieval poisoning, system prompt leakage, vector and embedding weaknesses, excessive agency, insecure output handling, **MCP tool poisoning**, model supply chain risk. MITRE ATLAS. Defences: least-privilege tools, human-in-the-loop for consequential actions, output validation, sandboxing, AI gateways, automated red-teaming (Garak, PyRIT) in CI."
+    },
+    {
+     "label": "Build",
+     "text": "Red-team your own system, which is now a serious target. Indirect injection via an uploaded tenant document that reaches the context window. Data exfiltration through tool use. System prompt extraction. Retrieval poisoning to make the agent cite a fabricated regulation. Cross-tenant leakage through embeddings. Then implement the mitigations and add automated jailbreak testing to CI."
+    },
+    {
+     "label": "Done when",
+     "text": "You've hijacked your own agent with a poisoned PDF, and then stopped it — with a regression test proving it stays stopped."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 47,
+   "q": 4,
+   "title": "DevSecOps and the software supply chain",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "SAST vs DAST vs IAST vs SCA vs secret scanning — what each actually catches and their false-positive economics. Dependency risk, transitive dependencies, typosquatting. SBOM (CycloneDX/SPDX), SLSA levels, provenance, artefact signing with Sigstore/cosign, reproducible builds. Model and dataset provenance as a supply chain problem."
+    },
+    {
+     "label": "Build",
+     "text": "Into the week-34 pipeline: CodeQL or Semgrep (SAST), Trivy (SCA and image scanning), gitleaks (secrets), OWASP ZAP baseline (DAST), CycloneDX SBOM, cosign signing with verification at admission. Fail the build on High/Critical."
+    },
+    {
+     "label": "Done when",
+     "text": "An unsigned image cannot be deployed to your cluster."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 48,
+   "q": 4,
+   "title": "Cloud and Kubernetes security",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "IAM least privilege and privilege escalation paths, managed identities vs secrets, Key Vault patterns, network segmentation, public storage misconfigurations. Kubernetes: RBAC auditing, Pod Security Admission, seccomp/AppArmor, dropping capabilities, admission control with Kyverno or OPA Gatekeeper, image provenance, runtime detection with Falco. The 4C's model."
+    },
+    {
+     "label": "Build",
+     "text": "Kyverno policies enforcing non-root, read-only root filesystem, no `:latest`, required limits, signed images only. Fix every Critical from Trivy. Audit cluster RBAC for over-permissive bindings — including the service account your AI workload runs under."
+    },
+    {
+     "label": "Done when",
+     "text": "A deliberately privileged pod manifest is rejected at admission."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 49,
+   "q": 4,
+   "title": "Cryptography and data protection in practice",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "TLS configuration (cipher suites, HSTS, pinning trade-offs), mTLS and service mesh identity, key management and rotation, envelope encryption, **field-level / application-layer encryption**, tokenisation vs encryption, deterministic vs randomised encryption and the queryability trade-off. Data classification, PII handling, GDPR essentials, data residency (very relevant to multi-jurisdiction tax data) — and where your embeddings and prompt logs sit in all of that."
+    },
+    {
+     "label": "Build",
+     "text": "Field-level encryption for sensitive tenant financial fields (MongoDB CSFLE or application-layer). PII redaction before anything reaches a model provider. Write and rehearse the key rotation runbook."
+    },
+    {
+     "label": "Done when",
+     "text": "Someone with a database dump — or your LLM trace logs — gets nothing useful."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 50,
+   "q": 4,
+   "title": "Offensive fundamentals",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "The attacker's workflow — recon and OSINT, scanning with `nmap`, enumeration, initial access, Linux and Windows privilege escalation, lateral movement, persistence. Active Directory basics (Kerberos, delegation, common attack paths). Living off the land."
+    },
+    {
+     "label": "Build",
+     "text": "Complete a full TryHackMe or Hack The Box path, ideally AD-focused. Document each box as if writing an engagement report."
+    },
+    {
+     "label": "Done when",
+     "text": "You've owned a box end to end and can explain the defensive mitigation for every step."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 51,
+   "q": 4,
+   "title": "Detection, response, and the adversarial capstone",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Security logging (what to log, what never to log), SIEM concepts, MITRE ATT&CK as a shared language, detection engineering, the incident response lifecycle, basic forensics and chain of custody."
+    },
+    {
+     "label": "Build",
+     "text": "Security logging across the platform — auth events, authorisation denials, admin actions, bulk exports, anomalous agent tool-call patterns. Write four detections: credential stuffing, impossible travel, bulk data export, and an agent attempting an unusual tool sequence. Then run a full adversarial capstone: attack your own platform using everything from weeks 42–50, unannounced-to-yourself if you can automate the trigger. Your detections should fire. Write the incident report."
+    },
+    {
+     "label": "Done when",
+     "text": "You attacked yourself, you caught yourself, and you have the timeline to prove it."
+    },
+    {
+     "label": "Note",
+     "text": "this week is dense. It's a good place to spend one of your slack weeks."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 52,
+   "q": 4,
+   "title": "Consolidation and positioning",
+   "items": [
+    {
+     "label": "Do",
+     "text": "Full written security assessment; remediate the top findings. Write a **secure coding standard for C#/.NET** for your team — concrete, with code examples, not platitudes. Then the capstone case study: problem, architecture, trade-offs, what broke, what you'd change."
+    },
+    {
+     "label": "Then",
+     "text": "Turn the year's 50 write-ups into a three-part blog series or a conference talk proposal. Update your CV around outcomes, not tools."
+    },
+    {
+     "label": "Finally",
+     "text": "Redo the week 1 exercise — write your work system's architecture from memory. Compare the two documents. That gap is the year."
+    },
+    {
+     "label": "Then",
+     "text": "Then pick your year-two depth. You'll be broad now; the next move is deep in one track, chosen from experience rather than guesswork."
+    },
+    {
+     "label": "Cert window",
+     "text": "Burp Suite Certified Practitioner (BSCP)."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": true
+  }
+ ]
+};
