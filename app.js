@@ -381,36 +381,40 @@
     renderActions(st, w);
   }
 
-  /* Drip is authored per quarter as hour-tagged slots, so it renders as a
-     list you can actually follow rather than a run-on sentence. Slots that
-     alternate resolve to this week's parity. */
-  function renderDrip(q, n) {
-    var slots = q.dripSlots || [], notes = q.dripNotes || [];
-    var hrs = slots.reduce(function (s, x) { return s + x.hours; }, 0);
-    $('dripHd').textContent = 'The drip · ' + hrs + ' hrs on day 6 · Q' + q.n + ' ' + q.short;
-
-    var ul = $('dripList'); ul.innerHTML = '';
-    slots.forEach(function (sl) {
-      var li = el('li', 'drip__row');
-      li.appendChild(el('span', 'drip__h num', sl.hours + ' hr'));
-      var body = el('span', 'drip__t');
-      body.innerHTML = md(sl.text);
-      var alt = /^alternating:/i.test(sl.text);
-      if (alt) {
+  /* One line per hour, already resolved for the week you are on.
+     Slots can carry a week-ranged override or a fortnightly alternation;
+     either way the panel states what to do rather than the rule. */
+  function dripFor(q, n) {
+    return (q.dripSlots || []).map(function (sl) {
+      var ov = sl.override;
+      if (ov && n >= ov.from && n <= ov.to) {
+        return { hours: sl.hours, text: ov.text, tag: 'weeks ' + ov.from + '\u2013' + ov.to };
+      }
+      if (sl.alternate) {
         var odd = (n % 2 === 1);
-        var pick = el('span', 'drip__pick', odd ? 'this week: odd' : 'this week: even');
+        return { hours: sl.hours, text: odd ? sl.alternate.odd : sl.alternate.even,
+                 tag: odd ? 'odd week' : 'even week' };
+      }
+      return { hours: sl.hours, text: sl.text, tag: null };
+    });
+  }
+
+  function renderDrip(q, n) {
+    var rows = dripFor(q, n);
+    var hrs = rows.reduce(function (s, x) { return s + x.hours; }, 0);
+    $('dripHd').textContent = 'The drip \u00b7 ' + hrs + ' hrs on day 6 \u00b7 Q' + q.n + ' ' + (q.short || q.name);
+    var ul = $('dripList'); ul.innerHTML = '';
+    rows.forEach(function (r) {
+      var li = el('li', 'drip__row');
+      li.appendChild(el('span', 'drip__h num', r.hours + ' hr'));
+      var body = el('span', 'drip__t');
+      body.innerHTML = md(r.text);
+      if (r.tag) {
         body.appendChild(document.createTextNode(' '));
-        body.appendChild(pick);
+        body.appendChild(el('span', 'drip__pick', r.tag));
       }
       li.appendChild(body);
       ul.appendChild(li);
-    });
-
-    var box = $('dripNotes'); box.innerHTML = '';
-    notes.forEach(function (t) {
-      var p = el('p', 'drip__note');
-      p.innerHTML = md(t);
-      box.appendChild(p);
     });
   }
 

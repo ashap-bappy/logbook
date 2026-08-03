@@ -50,12 +50,13 @@ const ROADMAP = {
     },
     {
      "hours": 1.0,
-     "text": "one OWASP Top 10 category, read properly, plus its cheat sheet."
+     "text": "one OWASP Top 10 category, read properly, plus its cheat sheet.",
+     "override": {
+      "from": 10,
+      "to": 12,
+      "text": "the OWASP Top 10 for LLM Applications and the Top 10 for Agentic Applications, end to end — roughly three hours, which is exactly these three slots. A threat catalogue only: not the labs, not the mitigations, that's week 46. You are about to design agent tools and an MCP server in weeks 21–22, and this is what stops you handing an agent a write-scoped credential because it was convenient. Four things to fix in your head before you write a tool schema: excessive agency, indirect prompt injection, retrieval poisoning, tool poisoning."
+     }
     }
-   ],
-   "dripNotes": [
-    "Dropped: DevOps. Weeks 2–4 are Linux and networking in the main track, so it stays warm anyway.",
-    "Weeks 10–12 replace the second hour — Read the **OWASP Top 10 for LLM Applications** and the **Top 10 for Agentic Applications** end to end — roughly three hours, which is exactly the three weekly slots. Read them as a *threat catalogue only*: not the labs, not the mitigations in depth, that's week 46. The purpose is narrow. You are about to design agent tools and an MCP server in weeks 21–22, and this is what stops you handing an agent a write-scoped database credential because it was convenient. Fix four things in your head before you write a tool schema: excessive agency, indirect prompt injection, retrieval poisoning, tool poisoning."
    ]
   },
   {
@@ -74,9 +75,6 @@ const ROADMAP = {
      "hours": 1.0,
      "text": "two PortSwigger Web Security Academy labs."
     }
-   ],
-   "dripNotes": [
-    "Dropped: DevOps. You're in Docker, Compose and Container Apps all quarter, so it's live in your build hours."
    ]
   },
   {
@@ -93,10 +91,13 @@ const ROADMAP = {
     },
     {
      "hours": 1.0,
-     "text": "alternating: **odd weeks** two PortSwigger labs · **even weeks** add a case to your AI eval set so the harness doesn't rot."
+     "text": "alternating fortnightly:",
+     "alternate": {
+      "odd": "two PortSwigger Web Security Academy labs.",
+      "even": "add a case to your AI eval set so the harness does not rot."
+     }
     }
-   ],
-   "dripNotes": []
+   ]
   },
   {
    "n": 4,
@@ -112,10 +113,13 @@ const ROADMAP = {
     },
     {
      "hours": 1.0,
-     "text": "alternating: **odd weeks** a Kubernetes troubleshooting scenario · **even weeks** keep the AI evals green."
+     "text": "alternating fortnightly:",
+     "alternate": {
+      "odd": "a Kubernetes troubleshooting scenario — break your own cluster, then fix it.",
+      "even": "keep the AI evals green."
+     }
     }
-   ],
-   "dripNotes": []
+   ]
   }
  ],
  "weeks": [
