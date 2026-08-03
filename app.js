@@ -134,6 +134,76 @@
   function qOf(n) { return ROADMAP.weeks[n - 1].q; }
   function quarter(n) { return ROADMAP.quarters[qOf(n) - 1]; }
 
+
+  /* ============================================================
+     THE SIX-DAY RHYTHM
+     Blocks sum to exactly 5 study / 9 build / 2 drip / 2 consolidate.
+     Days map onto the week's own gates: read it, build it, prove it.
+     ============================================================ */
+  var RHYTHM = {
+    normal: [
+      { label: 'Orient',       gate: 0,
+        purpose: 'Read the Learn material and scope what you are going to build. End the day knowing what you will type tomorrow.',
+        blocks: [['study', 2], ['build', 1]] },
+      { label: 'Go deep',      gate: 0,
+        purpose: 'Finish the reading. Take notes you could teach from — if you cannot explain it, you have not read it.',
+        blocks: [['study', 2], ['build', 1]] },
+      { label: 'Build',        gate: 1,
+        purpose: 'Heads down. Get the first version working end to end, however ugly.',
+        blocks: [['study', 0.5], ['build', 2.5]] },
+      { label: 'Build harder', gate: 1,
+        purpose: 'Push it to something you would show a colleague. Then break it on purpose and watch what happens.',
+        blocks: [['build', 3]] },
+      { label: 'Prove it',     gate: 2,
+        purpose: 'Satisfy the Done-when line. Measure it — do not assume it. Numbers before, numbers after.',
+        blocks: [['study', 0.5], ['build', 1.5], ['consolidate', 1]] },
+      { label: 'Drip & write', gate: null,
+        purpose: 'Two hours on the other three tracks, then write the week up. This is the day that gets skipped. Do not skip it.',
+        blocks: [['drip', 2], ['consolidate', 1]] }
+    ],
+    checkpoint: [
+      { label: 'Work it',   gate: 0,
+        purpose: 'Start the quarter\u2019s exercises. Timed and written, not in your head.',
+        blocks: [['study', 0.5], ['build', 2.5]] },
+      { label: 'Work it',   gate: 0,
+        purpose: 'Keep going. Volume matters this week — this is where the quarter gets consolidated.',
+        blocks: [['build', 3]] },
+      { label: 'Work it',   gate: 0,
+        purpose: 'Finish the set. Note every question you fumbled.',
+        blocks: [['study', 0.5], ['build', 2.5]] },
+      { label: 'Assess',    gate: 2,
+        purpose: 'The checkpoint question, answered honestly. A failed check ride means a slack week, not a disaster.',
+        blocks: [['study', 2], ['consolidate', 1]] },
+      { label: 'Publish',   gate: 1,
+        purpose: 'Write the quarter up properly and put it somewhere public.',
+        blocks: [['build', 1], ['consolidate', 1], ['drip', 1]] },
+      { label: 'Reset',     gate: null,
+        purpose: 'Mocks, review, and decide what the next quarter needs from you.',
+        blocks: [['study', 2], ['drip', 1]] }
+    ]
+  };
+
+  function dayPlan(n) {
+    return RHYTHM[ROADMAP.weeks[n - 1].checkpoint ? 'checkpoint' : 'normal'];
+  }
+  function blockKey(day, bi) { return day + '.' + bi; }
+  function blockDone(n, day, bi) {
+    var k = blockKey(day, bi);
+    return live().some(function (e) { return e.week === n && e.block === k; });
+  }
+  function dayLogged(n, day) {
+    var plan = dayPlan(n)[day], got = 0;
+    plan.blocks.forEach(function (b, i) { if (blockDone(n, day, i)) got += b[1]; });
+    return got;
+  }
+  function dayTotal(n, day) {
+    return dayPlan(n)[day].blocks.reduce(function (s, b) { return s + b[1]; }, 0);
+  }
+  function firstOpenDay(n) {
+    for (var d = 0; d < 6; d++) if (dayLogged(n, d) < dayTotal(n, d)) return d;
+    return 5;
+  }
+
   /* ---------- tiny DOM helpers ---------- */
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, txt) {
@@ -155,7 +225,63 @@
   /* ============================================================
      RENDER
      ============================================================ */
-  function renderAll() { renderHead(); renderRail(); renderEntry(); renderHours(); renderLedger(); renderFoot(); }
+  var dayView = null;   // null = follow the first unfinished day
+
+  function renderAll() { renderHead(); renderRail(); renderEntry(); renderDays(); renderHours(); renderLedger(); renderFoot(); }
+
+  function renderDays() {
+    var w = ROADMAP.weeks[view - 1], plan = dayPlan(view);
+    var sel = (dayView == null) ? firstOpenDay(view) : dayView;
+    var strip = $('dayStrip'); strip.innerHTML = '';
+    plan.forEach(function (d, i) {
+      var got = dayLogged(view, i), tot = dayTotal(view, i);
+      var b = el('button', 'daytab', 'D' + (i + 1));
+      b.type = 'button';
+      b.dataset.state = got >= tot ? 'done' : (got > 0 ? 'part' : 'open');
+      b.dataset.sel = (i === sel) ? '1' : '0';
+      b.title = 'Day ' + (i + 1) + ' — ' + d.label + ' (' + got + '/' + tot + ' h)';
+      b.onclick = (function (k) { return function () { dayView = k; renderDays(); }; })(i);
+      strip.appendChild(b);
+    });
+    $('dayHint').textContent = dayLogged(view, sel) + ' / ' + dayTotal(view, sel) + ' h logged';
+
+    var d = plan[sel], body = $('dayBody');
+    body.innerHTML = '';
+    var head = el('div', 'day__head');
+    head.appendChild(el('span', 'day__n', 'Day ' + (sel + 1)));
+    head.appendChild(el('span', 'day__label', d.label));
+    if (d.gate != null && w.gates[d.gate] != null) {
+      head.appendChild(el('span', 'day__serves', '→ ' + w.items[w.gates[d.gate]].label));
+    }
+    body.appendChild(head);
+    body.appendChild(el('p', 'day__purpose', d.purpose));
+
+    var row = el('div', 'day__blocks');
+    d.blocks.forEach(function (b, i) {
+      var done = blockDone(view, sel, i);
+      var meta = BUCKETS.filter(function (x) { return x.key === b[0]; })[0] || { label: b[0] };
+      var btn = el('button', 'block');
+      btn.type = 'button';
+      btn.dataset.done = done ? '1' : '0';
+      btn.dataset.bucket = b[0];
+      btn.appendChild(el('span', 'block__b', meta.label));
+      btn.appendChild(el('span', 'block__h num', b[1].toFixed(2).replace(/0$/, '') + ' h'));
+      btn.title = done ? 'Logged — remove it from the ledger to undo' : 'Log ' + b[1] + ' h of ' + meta.label;
+      if (done) { btn.disabled = true; }
+      else btn.onclick = function () {
+        S.entries.push({
+          id: uid(), date: today(), hours: b[1], bucket: b[0],
+          note: 'D' + (sel + 1) + ' ' + d.label, week: view,
+          block: blockKey(sel, i), updatedAt: Date.now()
+        });
+        touch();
+        if (dayLogged(view, sel) >= dayTotal(view, sel)) dayView = null;  // roll on
+        renderAll();
+      };
+      row.appendChild(btn);
+    });
+    body.appendChild(row);
+  }
 
   /* The header pill owns sync status. The footer only speaks up when
      there is something to actually do about it. */
@@ -198,7 +324,7 @@
         if (ROADMAP.weeks[n - 1].checkpoint) b.dataset.check = '1';
         b.title = 'Week ' + n + ' — ' + ROADMAP.weeks[n - 1].title;
         b.setAttribute('aria-label', b.title);
-        b.onclick = (function (k) { return function () { view = k; renderEntry(); renderHours(); renderRail(); }; })(n);
+        b.onclick = (function (k) { return function () { view = k; dayView = null; renderAll(); }; })(n);
         ticks.appendChild(b);
       }
       g.appendChild(ticks);
@@ -222,7 +348,7 @@
     if (view !== S.planWeek) {
       var jump = el('button', 'chip', '↩ Back to week ' + pad(S.planWeek));
       jump.type = 'button'; jump.style.cursor = 'pointer';
-      jump.onclick = function () { view = S.planWeek; renderEntry(); renderHours(); renderRail(); };
+      jump.onclick = function () { view = S.planWeek; dayView = null; renderAll(); };
       meta.appendChild(jump);
     }
 
@@ -346,7 +472,7 @@
       x.type = 'button'; x.title = 'Delete entry';
       x.onclick = function () {
         e.del = Date.now(); e.updatedAt = e.del;   // tombstone, so the delete syncs
-        touch(); renderHead(); renderHours(); renderLedger();
+        touch(); renderAll();
       };
       li.appendChild(x);
       ul.appendChild(li);
@@ -384,7 +510,7 @@
       note: $('logNote').value.trim(), week: view, updatedAt: Date.now()
     });
     $('logNote').value = '';
-    touch(); renderHead(); renderHours(); renderLedger();
+    touch(); renderAll();
   });
 
   $('hMinus').onclick = function () {
@@ -394,8 +520,8 @@
     var i = $('logHours'); i.value = Math.min(16, (parseFloat(i.value) || 0) + 0.25).toFixed(2);
   };
 
-  $('prevWk').onclick = function () { if (view > 1) { view--; renderEntry(); renderHours(); renderRail(); } };
-  $('nextWk').onclick = function () { if (view < 52) { view++; renderEntry(); renderHours(); renderRail(); } };
+  $('prevWk').onclick = function () { if (view > 1) { view--; dayView = null; renderAll(); } };
+  $('nextWk').onclick = function () { if (view < 52) { view++; dayView = null; renderAll(); } };
   document.addEventListener('keydown', function (e) {
     if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName) || e.metaKey || e.ctrlKey) return;
     if (e.key === 'ArrowLeft') $('prevWk').click();
