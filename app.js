@@ -312,7 +312,8 @@
       tr.appendChild(fl); wrap.appendChild(tr);
       bars.appendChild(wrap);
     });
-    $('wkTotal').textContent = h.total.toFixed(1) + ' / 21';
+    var weekTarget = BUCKETS.reduce(function (s, b) { return s + T[b.key]; }, 0);
+    $('wkTotal').textContent = h.total.toFixed(1) + ' / ' + weekTarget;
 
     /* Failure mode #1 — study outrunning build */
     var tw = $('tripwire'); tw.innerHTML = '';
@@ -320,7 +321,7 @@
       tw.innerHTML = '<div class="tripwire">Study is ahead of build this week (' +
         h.study.toFixed(1) + ' vs ' + h.build.toFixed(1) +
         ' hrs). That is failure mode #1 — you are consuming content, not building skill.</div>';
-    } else if (h.total >= 21 && h.build >= T.build) {
+    } else if (h.total >= weekTarget && h.build >= T.build) {
       tw.innerHTML = '<div class="tripwire" style="border-color:var(--lamp);color:var(--muted)">Full week logged, build target met.</div>';
     }
   }
@@ -456,16 +457,7 @@
 
   /* ---------- sync wiring ---------- */
   if (window.Sync) {
-    Sync.init({
-      get: function () { return S; },
-      set: function (next) {
-        var wasCurrent = (view === S.planWeek);
-        S = migrate(next);
-        if (wasCurrent) view = S.planWeek;      // follow the plan week in from another device
-        view = clamp(view, 1, 52);
-      },
-      saveLocal: save
-    });
+    /* listener first — init fires its first status event synchronously */
     Sync.onStatus(function (state, msg, at) {
       var dot = $('syncDot'), lbl = $('syncLabel');
       var words = { off:'Local only', idle:'Synced', syncing:'Syncing', pending:'Saving',
@@ -476,6 +468,16 @@
       if (state === 'idle' || state === 'error' || state === 'offline') renderAll();
       else renderFoot();
       $('syncMsg').textContent = msg || '';
+    });
+    Sync.init({
+      get: function () { return S; },
+      set: function (next) {
+        var wasCurrent = (view === S.planWeek);
+        S = migrate(next);
+        if (wasCurrent) view = S.planWeek;      // follow the plan week in from another device
+        view = clamp(view, 1, 52);
+      },
+      saveLocal: save
     });
   }
 

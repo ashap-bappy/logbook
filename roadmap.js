@@ -6,9 +6,9 @@ const ROADMAP = {
   "slackBudget": 4,
   "restDays": 1,
   "targets": {
-   "study": 6,
-   "build": 10,
-   "drip": 3,
+   "study": 5,
+   "build": 9,
+   "drip": 2,
    "consolidate": 2
   },
   "buckets": [
