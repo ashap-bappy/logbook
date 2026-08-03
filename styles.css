@@ -341,3 +341,15 @@ dialog::backdrop{background:rgba(6,10,16,.78)}
   .day__label{font-size:16px}
   .block{padding:8px 12px}
 }
+
+/* ---------- drip ---------- */
+.drip{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.drip__row{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:baseline}
+.drip__h{font-size:12.5px;color:var(--lamp);text-align:right}
+.drip__t{font-size:14px;color:#C6D1E0}
+.drip__t strong{color:var(--vellum);font-weight:600}
+.drip__pick{font-family:var(--f-gauge);text-transform:uppercase;letter-spacing:.11em;font-size:10.5px;
+  border:1px solid var(--brass-dim);color:var(--brass);padding:1px 7px;border-radius:1px;white-space:nowrap}
+.drip__notes{margin-top:12px;display:flex;flex-direction:column;gap:9px}
+.drip__note{margin:0;font-size:13px;color:var(--muted);border-left:2px solid var(--rule-lit);padding-left:12px}
+.drip__note strong{color:#C6D1E0;font-weight:600}

@@ -158,7 +158,7 @@
         purpose: 'Satisfy the Done-when line. Measure it — do not assume it. Numbers before, numbers after.',
         blocks: [['study', 0.5], ['build', 1.5], ['consolidate', 1]] },
       { label: 'Drip & write', gate: null,
-        purpose: 'Two hours on the other three tracks, then write the week up. This is the day that gets skipped. Do not skip it.',
+        purpose: 'Two hours on the drip below, then write the week up. This is the day that gets skipped. Do not skip it.',
         blocks: [['drip', 2], ['consolidate', 1]] }
     ],
     checkpoint: [
@@ -328,7 +328,7 @@
         ticks.appendChild(b);
       }
       g.appendChild(ticks);
-      g.appendChild(el('span', 'railq__label', 'Q' + q.n + ' · ' + q.name));
+      g.appendChild(el('span', 'railq__label', 'Q' + q.n + ' · ' + (q.short || q.name)));
       rail.appendChild(g);
     });
   }
@@ -343,7 +343,7 @@
     $('hrsWk').textContent = pad(view);
 
     var meta = $('wkMeta'); meta.innerHTML = '';
-    meta.appendChild(el('span', 'chip chip--lamp', 'Q' + q.n + ' · ' + q.name));
+    meta.appendChild(el('span', 'chip chip--lamp', 'Q' + q.n + ' · ' + (q.short || q.name)));
     if (w.checkpoint) meta.appendChild(el('span', 'chip chip--check', 'Check ride'));
     if (view !== S.planWeek) {
       var jump = el('button', 'chip', '↩ Back to week ' + pad(S.planWeek));
@@ -372,13 +372,46 @@
       list.appendChild(li);
     });
 
-    $('wkDrip').textContent = q.drip;
+    renderDrip(q, view);
 
     var wu = $('wuInput');
     wu.value = st.writeup || '';
     wu.onchange = function () { st.writeup = wu.value.trim(); touch(view); renderHead(); };
 
     renderActions(st, w);
+  }
+
+  /* Drip is authored per quarter as hour-tagged slots, so it renders as a
+     list you can actually follow rather than a run-on sentence. Slots that
+     alternate resolve to this week's parity. */
+  function renderDrip(q, n) {
+    var slots = q.dripSlots || [], notes = q.dripNotes || [];
+    var hrs = slots.reduce(function (s, x) { return s + x.hours; }, 0);
+    $('dripHd').textContent = 'The drip · ' + hrs + ' hrs on day 6 · Q' + q.n + ' ' + q.short;
+
+    var ul = $('dripList'); ul.innerHTML = '';
+    slots.forEach(function (sl) {
+      var li = el('li', 'drip__row');
+      li.appendChild(el('span', 'drip__h num', sl.hours + ' hr'));
+      var body = el('span', 'drip__t');
+      body.innerHTML = md(sl.text);
+      var alt = /^alternating:/i.test(sl.text);
+      if (alt) {
+        var odd = (n % 2 === 1);
+        var pick = el('span', 'drip__pick', odd ? 'this week: odd' : 'this week: even');
+        body.appendChild(document.createTextNode(' '));
+        body.appendChild(pick);
+      }
+      li.appendChild(body);
+      ul.appendChild(li);
+    });
+
+    var box = $('dripNotes'); box.innerHTML = '';
+    notes.forEach(function (t) {
+      var p = el('p', 'drip__note');
+      p.innerHTML = md(t);
+      box.appendChild(p);
+    });
   }
 
   function renderActions(st, w) {
