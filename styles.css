@@ -353,3 +353,20 @@ dialog::backdrop{background:rgba(6,10,16,.78)}
 .drip__notes{margin-top:12px;display:flex;flex-direction:column;gap:9px}
 .drip__note{margin:0;font-size:13px;color:var(--muted);border-left:2px solid var(--rule-lit);padding-left:12px}
 .drip__note strong{color:#C6D1E0;font-weight:600}
+
+/* ---------- destructive action ---------- */
+.btn--danger{background:transparent;color:var(--warn);border-color:var(--warn)}
+.btn--danger:hover:not(:disabled){background:var(--warn);color:#1A0E0C}
+.resetopt{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);
+  border:1px solid var(--rule);padding:11px 13px;border-radius:1px;cursor:pointer}
+.resetopt input{margin:2px 0 0;accent-color:var(--warn)}
+.resetopt b{color:var(--vellum);font-weight:600}
+
+/* ---------- not started yet ---------- */
+.notstarted{display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+  padding:15px 22px;border-bottom:1px solid var(--rule);
+  background:linear-gradient(90deg,rgba(200,151,63,.07),transparent 70%);
+  border-left:2px solid var(--brass)}
+.notstarted p{margin:6px 0 0;font-size:13.5px;color:var(--muted);max-width:62ch}
+.notstarted__act{display:flex;gap:9px;align-items:center;margin-left:auto}
+@media (max-width:1000px){ .notstarted{padding:14px 16px} .notstarted__act{margin-left:0;width:100%} }

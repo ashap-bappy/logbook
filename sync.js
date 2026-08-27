@@ -173,6 +173,16 @@ window.Sync = (function () {
       return run();
     },
     disconnect: function () { clearTimeout(timer); writeCfg(null); setStatus('off'); },
+    /* Deliberate overwrite: pull only to learn the current sha, then push
+       local state as-is. Used by reset — a merge would resurrect the data. */
+    overwrite: function () {
+      if (!cfg) return Promise.resolve();
+      clearTimeout(timer); busy = true; setStatus('syncing');
+      return pull()
+        .then(function () { return push(host.get()); })
+        .then(function () { lastAt = Date.now(); busy = false; setStatus('idle'); })
+        .catch(function (err) { busy = false; setStatus('error', err.message); });
+    },
     now: run,
     schedule: schedule,
     isOn: function () { return !!cfg; },

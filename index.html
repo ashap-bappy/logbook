@@ -71,6 +71,17 @@
       </div>
     </div>
 
+    <div class="notstarted" id="notStarted" hidden>
+      <div>
+        <span class="gauge">The clock has not started</span>
+        <p>Elapsed weeks and the slack budget begin when you log your first session — not when you open the page. Log an entry and today becomes day one, or pick a date and start deliberately.</p>
+      </div>
+      <div class="notstarted__act">
+        <input type="date" id="startPick" aria-label="Start date">
+        <button class="btn" id="startBtn" type="button">Start the plan</button>
+      </div>
+    </div>
+
     <div class="days">
       <div class="days__hd">
         <span class="gauge">Day plan</span>
@@ -142,9 +153,10 @@
 <footer class="foot">
   <span class="hint" id="footHint"></span>
   <label class="gauge" for="startDate" style="color:var(--dim)">Started</label>
-  <input type="date" id="startDate" aria-label="Start date">
+  <input type="date" id="startDate" aria-label="Start date" title="Day one of the plan. Set automatically by your first logged entry.">
   <button class="btn btn--ghost" id="exportBtn" type="button">Export</button>
   <button class="btn btn--ghost" id="importBtn" type="button">Import</button>
+  <button class="btn btn--danger" id="resetBtn" type="button">Reset</button>
   <input type="file" id="importFile" accept="application/json" hidden>
 </footer>
 
@@ -154,6 +166,28 @@
     <button class="btn btn--ghost" id="wuClose" type="button" style="margin-left:auto;padding:5px 12px">Close</button>
   </div>
   <ul class="wl" id="wuList"></ul>
+</dialog>
+
+<dialog id="resetDialog">
+  <div class="card__hd">
+    <span class="gauge">Start fresh</span>
+    <button class="btn btn--ghost" id="resetCancel" type="button" style="margin-left:auto;padding:5px 12px">Cancel</button>
+  </div>
+  <div class="card__bd">
+    <p class="syncwarn" id="resetWhat">This deletes everything.</p>
+    <p class="syncnote">Your start date resets to today and the plan returns to week 01. The roadmap itself is untouched — only your logged progress goes.</p>
+    <div class="syncform">
+      <button class="btn btn--ghost" id="resetExport" type="button">Export a backup first</button>
+      <label class="resetopt" id="resetRemoteWrap">
+        <input type="checkbox" id="resetRemote" checked>
+        <span>Also wipe the synced copy in <b id="resetRepo">your repo</b> — leave this on, or the next sync restores everything.</span>
+      </label>
+      <div class="syncform__act">
+        <button class="btn btn--danger" id="resetGo" type="button">Delete everything and start fresh</button>
+      </div>
+      <p class="syncmsg" id="resetMsg"></p>
+    </div>
+  </div>
 </dialog>
 
 <dialog id="syncDialog">

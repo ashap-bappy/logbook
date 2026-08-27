@@ -16,7 +16,9 @@
     return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
   }
   function blank() {
-    return { startDate: today(), planWeek: 1, weeks: {}, entries: [],
+    /* startDate stays null until the first session is logged: the plan
+       should not be burning calendar weeks while you are still setting up. */
+    return { startDate: null, planWeek: 1, weeks: {}, entries: [],
              deviceId: uid(), updatedAt: 0 };
   }
   /* older saves used per-device integer ids, which would collide across
@@ -36,6 +38,14 @@
       if (!s.weeks[k].updatedAt) s.weeks[k].updatedAt = s.updatedAt;
     });
     delete s.seq;
+    // an older save, or one whose entries predate its start date, anchors on the first session
+    var live0 = (s.entries || []).filter(function (e) { return !e.del; });
+    if (live0.length) {
+      var first = live0.map(function (e) { return e.date; }).sort()[0];
+      if (!s.startDate || first < s.startDate) s.startDate = first;
+    } else if (s.startDate === undefined) {
+      s.startDate = null;
+    }
     return s;
   }
   function load() {
@@ -46,7 +56,6 @@
       if (!s || typeof s !== 'object') return blank();
       s.weeks = s.weeks || {}; s.entries = s.entries || [];
       s.planWeek = clamp(s.planWeek || 1, 1, 52);
-      s.startDate = s.startDate || today();
       return migrate(s);
     } catch (e) { storageOK = false; return blank(); }
   }
@@ -96,8 +105,12 @@
     return w;
   }
   function isDone(n) { return !!(S.weeks[n] && S.weeks[n].endorsedAt); }
-  function calWeek() { return clamp(Math.floor(dayDiff(today(), S.startDate) / 7) + 1, 1, 52); }
-  function slackUsed() { return Math.max(0, calWeek() - S.planWeek); }
+  function started() { return !!S.startDate; }
+  function calWeek() {
+    if (!started()) return null;
+    return clamp(Math.floor(dayDiff(today(), S.startDate) / 7) + 1, 1, 52);
+  }
+  function slackUsed() { return started() ? Math.max(0, calWeek() - S.planWeek) : null; }
   function totalHours() {
     return live().reduce(function (s, e) { return s + e.hours; }, 0);
   }
@@ -274,6 +287,7 @@
           note: 'D' + (sel + 1) + ' ' + d.label, week: view,
           block: blockKey(sel, i), updatedAt: Date.now()
         });
+        if (!started()) S.startDate = today();     // first session is day one
         touch();
         if (dayLogged(view, sel) >= dayTotal(view, sel)) dayView = null;  // roll on
         renderAll();
@@ -301,13 +315,16 @@
     var t = totalHours();
     $('roTotal').innerHTML = t.toFixed(1) + '<small>/' + M.totalHours + '</small>';
     $('roPlan').textContent = pad(S.planWeek);
-    $('roCal').textContent = pad(calWeek());   // weeks elapsed since the start date
+    $('roCal').textContent = started() ? pad(calWeek()) : '\u2014';
     var su = slackUsed();
-    $('roSlack').innerHTML = su + '<small>/' + M.slackBudget + '</small>';
-    $('roSlackWrap').classList.toggle('readout--over', su > M.slackBudget);
+    $('roSlack').innerHTML = started()
+      ? su + '<small>/' + M.slackBudget + '</small>'
+      : '\u2014';
+    $('roSlackWrap').classList.toggle('readout--over', started() && su > M.slackBudget);
     $('roStreak').innerHTML = streak() + '<small>d</small>';
     $('roWriteupsN').textContent = writeups().length;
-    $('startDate').value = S.startDate;
+    $('startDate').value = S.startDate || '';
+    $('notStarted').hidden = started();
   }
 
   function renderRail() {
@@ -546,6 +563,7 @@
       hours: Math.round(hrs * 4) / 4, bucket: draft.bucket,
       note: $('logNote').value.trim(), week: view, updatedAt: Date.now()
     });
+    if (!started()) S.startDate = $('logDate').value || today();   // first session is day one
     $('logNote').value = '';
     touch(); renderAll();
   });
@@ -566,7 +584,12 @@
   });
 
   $('startDate').onchange = function () {
-    if (this.value) { S.startDate = this.value; touch(); renderHead(); }
+    if (this.value) { S.startDate = this.value; touch(); renderAll(); }
+  };
+  $('startPick').value = today();
+  $('startBtn').onclick = function () {
+    S.startDate = $('startPick').value || today();
+    touch(); renderAll();
   };
 
   $('roWriteups').onclick = function () {
@@ -643,6 +666,33 @@
       saveLocal: save
     });
   }
+
+  var resetDlg = $('resetDialog');
+  $('resetBtn').onclick = function () {
+    var n = live().length, done = Object.keys(S.weeks).filter(function (k) { return S.weeks[k].endorsedAt; }).length;
+    $('resetWhat').textContent = 'This deletes ' + totalHours().toFixed(1) + ' logged hours across ' +
+      n + ' entr' + (n === 1 ? 'y' : 'ies') + ', ' + done + ' endorsed week' + (done === 1 ? '' : 's') +
+      ' and ' + writeups().length + ' write-up' + (writeups().length === 1 ? '' : 's') + '. It cannot be undone.';
+    var on = window.Sync && Sync.isOn(), cfg = on ? Sync.config() : null;
+    $('resetRemoteWrap').style.display = on ? '' : 'none';
+    if (cfg) $('resetRepo').textContent = cfg.owner + '/' + cfg.repo;
+    $('resetMsg').textContent = '';
+    resetDlg.showModal();
+  };
+  $('resetCancel').onclick = function () { resetDlg.close(); };
+  $('resetExport').onclick = function () { $('exportBtn').click(); };
+  $('resetGo').onclick = function () {
+    var wipeRemote = window.Sync && Sync.isOn() && $('resetRemote').checked;
+    S = blank(); S.updatedAt = Date.now();   // a deliberate reset outranks any remote copy
+    view = 1; dayView = null;
+    save();
+    if (wipeRemote) {
+      $('resetMsg').textContent = 'Clearing the synced copy…';
+      Sync.overwrite().then(function () { resetDlg.close(); renderAll(); });
+    } else {
+      resetDlg.close(); renderAll();
+    }
+  };
 
   var syncDlg = $('syncDialog');
   $('syncBtn').onclick = function () {
