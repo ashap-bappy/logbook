@@ -126,23 +126,23 @@ const ROADMAP = {
   {
    "n": 1,
    "q": 1,
-   "title": "Lab setup and honest baseline",
+   "title": "Bootstrap the spine, set an honest baseline",
    "items": [
     {
      "label": "Learn",
-     "text": "WSL2 + Ubuntu set up properly, dotfiles, tmux, modern shell tooling (`fzf`, `rg`, `bat`, `jq`). Note system (Obsidian or markdown in git) and Anki."
+     "text": "WSL2 + Ubuntu set up properly, git hygiene (branching, rebase, hooks), and the shell you'll live in for a year — `fzf`, `rg`, `bat`, `jq`. **Timebox dotfiles to one hour.** Configuring a prompt is the most seductive way to waste this week; you are here to ship a service, not a colour scheme."
     },
     {
      "label": "Build",
-     "text": "Bootstrap FilingHub — ASP.NET Core minimal API + MongoDB via `docker-compose`. One endpoint that accepts an upload and stores it."
+     "text": "Bootstrap FilingHub — ASP.NET Core minimal API + MongoDB via `docker-compose`. One endpoint that accepts an upload and stores it. You're *using* Docker as a tool here; week 27 is where you learn what a container actually is, and that gap is deliberate."
     },
     {
      "label": "Also",
-     "text": "Write, from memory and without looking, the architecture of the largest system you work on today. Save it. You'll redo this in week 52."
+     "text": "Write, from memory and without looking, the architecture of the largest system you work on today. Save it. You'll redo this in week 52 and the difference is the year."
     },
     {
      "label": "Done when",
-     "text": "`docker compose up` gives a working API + DB, and the README has a C4 Context diagram."
+     "text": "`docker compose up` gives a working API + DB, the README has a C4 Context diagram, and your baseline architecture doc exists."
     }
    ],
    "gates": [
@@ -159,11 +159,11 @@ const ROADMAP = {
    "items": [
     {
      "label": "Learn",
-     "text": "Processes, fork/exec, file descriptors, permissions & setuid, signals, systemd units, `/proc`, package management. Tools: `ps`, `lsof`, `strace`, `journalctl`, `htop`."
+     "text": "Processes, fork/exec, file descriptors, permissions & setuid, signals, systemd units, `/proc`, package management. Tools: `ps`, `lsof`, `strace`, `journalctl`, `htop` — and `tmux`, which earns its keep the moment you're tailing logs in one pane and killing processes in another."
     },
     {
      "label": "Build",
-     "text": "Run FilingHub as a systemd service in a plain VM (no Docker). Bash healthcheck + log rotation."
+     "text": "Run FilingHub as a systemd service in a plain VM (no Docker). Bash healthcheck + log rotation. Set up your note system (Obsidian or markdown in git) and start Anki — this week gives you the first facts worth putting in it."
     },
     {
      "label": "Done when",
@@ -509,31 +509,6 @@ const ROADMAP = {
   {
    "n": 16,
    "q": 2,
-   "title": "Context engineering",
-   "items": [
-    {
-     "label": "Learn",
-     "text": "Prompt engineering has been absorbed into the broader discipline of **context engineering** — designing everything inside the window: system prompt, retrieved documents, tool results, memory, examples, reasoning budget. Few-shot example selection, task decomposition, chain-of-thought and its limits, prompt caching economics, building a failure taxonomy for your own task."
-    },
-    {
-     "label": "Build",
-     "text": "A versioned prompt library — prompts in git with a template system, not string literals in code. A/B two designs on your labelled set from week 15."
-    },
-    {
-     "label": "Done when",
-     "text": "Changing a prompt is a reviewed, tested, versioned change."
-    }
-   ],
-   "gates": [
-    0,
-    1,
-    2
-   ],
-   "checkpoint": false
-  },
-  {
-   "n": 17,
-   "q": 2,
    "title": "Evaluation (the keystone week — do not skip)",
    "items": [
     {
@@ -547,6 +522,31 @@ const ROADMAP = {
     {
      "label": "Done when",
      "text": "You cannot merge a prompt change that degrades quality. This single artefact will be the most impressive thing in your portfolio for the next two years."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 17,
+   "q": 2,
+   "title": "Context engineering",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Prompt engineering has been absorbed into the broader discipline of **context engineering** — designing everything inside the window: system prompt, retrieved documents, tool results, memory, examples, reasoning budget. Few-shot example selection, task decomposition, chain-of-thought and its limits, prompt caching economics, building a failure taxonomy for your own task."
+    },
+    {
+     "label": "Build",
+     "text": "A versioned prompt library — prompts in git with a template system, not string literals in code. Then A/B two designs **through the week 16 harness**, not by eye. This is why evaluation came first: without it you are guessing whether a prompt got better."
+    },
+    {
+     "label": "Done when",
+     "text": "Changing a prompt is a reviewed, tested, versioned change, and you can state the score delta it caused."
     }
    ],
    "gates": [
@@ -617,7 +617,7 @@ const ROADMAP = {
     },
     {
      "label": "Build",
-     "text": "Add a reranker, mandatory inline citations, and per-tenant filtering. Extend the week-17 harness with faithfulness scoring."
+     "text": "Add a reranker, mandatory inline citations, and per-tenant filtering. Extend the week-16 harness with faithfulness scoring. A tenant claim on the query is enough here — week 41 is where authentication and authorisation get done properly, and it will revisit this."
     },
     {
      "label": "Done when",
@@ -696,11 +696,11 @@ const ROADMAP = {
    "items": [
     {
      "label": "Learn",
-     "text": "Tracing with OpenTelemetry GenAI semantic conventions — this is just observability applied to non-determinism, and you'll generalise it in week 36. Langfuse for LLM-specific tracing; the Aspire dashboard now surfaces model interaction traces natively. Token and cost accounting, semantic caching, model routing and fallback, rate limit handling, PII redaction before egress, input and output guardrails, prompt canaries and rollback, drift detection."
+     "text": "Tracing with OpenTelemetry GenAI semantic conventions — this is just observability applied to non-determinism, and you'll generalise it in week 35. Langfuse for LLM-specific tracing; the Aspire dashboard now surfaces model interaction traces natively. Token and cost accounting, semantic caching, model routing and fallback, rate limit handling, PII redaction before egress, input and output guardrails, prompt canaries and rollback, drift detection."
     },
     {
      "label": "Build",
-     "text": "Every LLM call traced with tokens, latency, cost and eval score. A cost dashboard with per-tenant attribution and budget alerts. Canary a prompt change behind a feature flag with automatic rollback. (Week 35 upgrades this to a real GitOps canary.)"
+     "text": "Every LLM call traced with tokens, latency, cost and eval score. A cost dashboard with per-tenant attribution and budget alerts. Canary a prompt change behind a feature flag with automatic rollback. (Week 37 upgrades this to a real GitOps canary.)"
     },
     {
      "label": "Done when",
@@ -725,7 +725,7 @@ const ROADMAP = {
     },
     {
      "label": "Build",
-     "text": "Fine-tune a small open model on one narrow, high-volume task from FilingHub. Compare against prompting a frontier model on your week-17 eval set: quality, latency, cost per 1k calls."
+     "text": "Fine-tune a small open model on one narrow, high-volume task from FilingHub. Compare against prompting a frontier model on your week-16 eval set: quality, latency, cost per 1k calls."
     },
     {
      "label": "Done when",
@@ -983,11 +983,15 @@ const ROADMAP = {
     },
     {
      "label": "Build",
-     "text": "Rebuild the crude week-17 pipeline into a real one, in GitHub Actions *and* Azure DevOps (learn both; your employer likely uses ADO). Unit and integration tests with Testcontainers, coverage gate, **the AI eval suite as a required check**, SBOM generation, OIDC-authenticated registry push."
+     "text": "Rebuild the crude week-16 pipeline into a real one, in GitHub Actions *and* Azure DevOps (learn both; your employer likely uses ADO). Unit and integration tests with Testcontainers, coverage gate, **the AI eval suite as a required check**, SBOM generation, OIDC-authenticated registry push."
     },
     {
      "label": "Done when",
      "text": "No static cloud credential exists anywhere, and a quality regression in the LLM output fails the build alongside a failing unit test."
+    },
+    {
+     "label": "Note",
+     "text": "you wire up OIDC federation and SBOM generation here as mechanical steps; weeks 41 and 47 are where you learn what they actually protect against. Doing before understanding is deliberate — the alternative is a CI pipeline with a static secret in it for another three months."
     }
    ],
    "gates": [
@@ -999,31 +1003,6 @@ const ROADMAP = {
   },
   {
    "n": 35,
-   "q": 3,
-   "title": "Continuous Delivery and GitOps",
-   "items": [
-    {
-     "label": "Learn",
-     "text": "Push vs pull deployment, GitOps principles, Argo CD and Flux, app-of-apps, sync waves, drift correction. Progressive delivery: blue-green, canary, feature flags. Database migrations under zero downtime (expand/contract)."
-    },
-    {
-     "label": "Build",
-     "text": "Argo CD reconciling everything from a config repo. A canary release with automatic rollback on error-rate breach. Replace the week-23 feature-flag prompt canary with a real GitOps canary gated on live eval scores."
-    },
-    {
-     "label": "Done when",
-     "text": "Deployment is a merged PR, and you've rolled back automatically at least once."
-    }
-   ],
-   "gates": [
-    0,
-    1,
-    2
-   ],
-   "checkpoint": false
-  },
-  {
-   "n": 36,
    "q": 3,
    "title": "Observability I: instrumentation, generalised",
    "items": [
@@ -1048,7 +1027,7 @@ const ROADMAP = {
    "checkpoint": false
   },
   {
-   "n": 37,
+   "n": 36,
    "q": 3,
    "title": "Observability II: SRE practice",
    "items": [
@@ -1063,6 +1042,31 @@ const ROADMAP = {
     {
      "label": "Done when",
      "text": "Your alerts fire on user-visible symptoms, and every one has a written runbook."
+    }
+   ],
+   "gates": [
+    0,
+    1,
+    2
+   ],
+   "checkpoint": false
+  },
+  {
+   "n": 37,
+   "q": 3,
+   "title": "Continuous Delivery and GitOps",
+   "items": [
+    {
+     "label": "Learn",
+     "text": "Push vs pull deployment, GitOps principles, Argo CD and Flux, app-of-apps, sync waves, drift correction. Progressive delivery: blue-green, canary, feature flags. Database migrations under zero downtime (expand/contract)."
+    },
+    {
+     "label": "Build",
+     "text": "Argo CD reconciling everything from a config repo. A canary release with automatic rollback on error-rate breach. Replace the week-23 feature-flag prompt canary with a real GitOps canary gated on live eval scores."
+    },
+    {
+     "label": "Done when",
+     "text": "Deployment is a merged PR, and you've rolled back automatically at least once."
     }
    ],
    "gates": [

@@ -301,7 +301,7 @@
     var t = totalHours();
     $('roTotal').innerHTML = t.toFixed(1) + '<small>/' + M.totalHours + '</small>';
     $('roPlan').textContent = pad(S.planWeek);
-    $('roCal').textContent = pad(calWeek());
+    $('roCal').textContent = pad(calWeek());   // weeks elapsed since the start date
     var su = slackUsed();
     $('roSlack').innerHTML = su + '<small>/' + M.slackBudget + '</small>';
     $('roSlackWrap').classList.toggle('readout--over', su > M.slackBudget);
@@ -454,9 +454,9 @@
     var left = labels.filter(function (_, i) { return !st.gates[i]; });
     box.appendChild(el('span', 'hint', ready
       ? 'All three signed off. ' + (w.checkpoint
-          ? 'Be honest — a failed check ride is a slack week, not a disaster.'
-          : 'Endorsing advances the plan week.')
-      : 'Still open: ' + left.join(', ') + '.'));
+          ? 'Passing stamps the week and moves the plan on. Be honest — a failed check ride is a slack week, not a disaster.'
+          : 'Endorsing stamps the week as done and moves the plan on to week ' + pad(Math.min(52, view + 1)) + '.')
+      : 'Still open: ' + left.join(', ') + '. Tick all three to endorse the week — that stamps it and advances the plan.'));
   }
 
   function renderHours() {
