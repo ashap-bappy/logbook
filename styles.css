@@ -35,6 +35,9 @@
 [data-q="3"]{--lamp:var(--q3)}
 [data-q="4"]{--lamp:var(--q4)}
 
+/* the hidden attribute must beat any layout rule */
+[hidden]{display:none !important}
+
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
@@ -180,13 +183,17 @@ input:focus{border-color:var(--brass);outline:none}
 input[type=date]{font-family:var(--f-data);color-scheme:dark}
 
 .actions{padding:18px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.btn{font-family:var(--f-gauge);text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600;
-  background:var(--brass);color:#171208;border:1px solid var(--brass);
+/* Foreground, background and border travel together as custom properties.
+   A variant can never win one and lose another, which is how brass-on-brass
+   invisible text happened. */
+.btn{--btn-bg:var(--brass);--btn-fg:#171208;--btn-bd:var(--brass);
+  font-family:var(--f-gauge);text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-weight:600;
+  background:var(--btn-bg);color:var(--btn-fg);border:1px solid var(--btn-bd);
   padding:10px 20px;cursor:pointer;border-radius:1px}
-.btn:hover:not(:disabled){background:#DBA84A}
-.btn:disabled{background:transparent;color:var(--dim);border-color:var(--rule);cursor:not-allowed}
-.btn--ghost{background:transparent;color:var(--muted);border-color:var(--rule)}
-.btn--ghost:hover{background:transparent;color:var(--brass);border-color:var(--brass)}
+.btn:hover:not(:disabled){--btn-bg:#DBA84A;--btn-bd:#DBA84A}
+.btn:disabled{--btn-bg:transparent;--btn-fg:var(--dim);--btn-bd:var(--rule);cursor:not-allowed}
+.btn--ghost{--btn-bg:transparent;--btn-fg:var(--muted);--btn-bd:var(--rule)}
+.btn--ghost:hover:not(:disabled){--btn-bg:rgba(200,151,63,.14);--btn-fg:var(--brass);--btn-bd:var(--brass)}
 .hint{font-size:12.5px;color:var(--dim)}
 
 /* ---------- the signature: endorsement stamp ---------- */
@@ -355,8 +362,8 @@ dialog::backdrop{background:rgba(6,10,16,.78)}
 .drip__note strong{color:#C6D1E0;font-weight:600}
 
 /* ---------- destructive action ---------- */
-.btn--danger{background:transparent;color:var(--warn);border-color:var(--warn)}
-.btn--danger:hover:not(:disabled){background:var(--warn);color:#1A0E0C}
+.btn--danger{--btn-bg:transparent;--btn-fg:var(--warn);--btn-bd:var(--warn)}
+.btn--danger:hover:not(:disabled){--btn-bg:var(--warn);--btn-fg:#1A0E0C;--btn-bd:var(--warn)}
 .resetopt{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);
   border:1px solid var(--rule);padding:11px 13px;border-radius:1px;cursor:pointer}
 .resetopt input{margin:2px 0 0;accent-color:var(--warn)}

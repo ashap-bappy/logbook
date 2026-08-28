@@ -7,6 +7,7 @@
 (function () {
   'use strict';
 
+  var BUILD = '9';   // must match <meta name="app-build"> or the browser is serving a cached script
   var KEY = 'hr936.logbook.v1';
   var M = ROADMAP.meta, T = M.targets, BUCKETS = M.buckets;
 
@@ -301,6 +302,12 @@
      there is something to actually do about it. */
   function renderFoot() {
     var h = $('footHint'); if (!h) return;
+    var meta = document.querySelector('meta[name="app-build"]');
+    if (meta && meta.content !== BUILD) {
+      h.textContent = 'This page is running a cached older script (page build ' + meta.content +
+                      ', script build ' + BUILD + '). Hard-refresh with Ctrl+Shift+R — buttons may not respond until you do.';
+      return;
+    }
     var st = (window.Sync && Sync.isOn()) ? Sync.status() : null;
     if (!st) {
       h.textContent = 'Not synced — data stays in this browser. Export is your backup, or set up sync in the header.';
